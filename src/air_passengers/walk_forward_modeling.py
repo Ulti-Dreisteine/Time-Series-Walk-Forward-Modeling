@@ -58,10 +58,10 @@ def walk_forward_validation(X: np.ndarray, Y: np.ndarray, train_n: int, test_n: 
         Y_test_pred = rgsr.predict(X_test)
         MAE_lst.append(error(Y_test.flatten(), Y_test_pred.flatten()))
 
-        proj_plt.figure()
-        proj_plt.plot(Y_test.flatten())
-        proj_plt.plot(Y_test_pred.flatten())
-        proj_plt.show()
+        # proj_plt.figure()
+        # proj_plt.plot(Y_test.flatten())
+        # proj_plt.plot(Y_test_pred.flatten())
+        # proj_plt.show()
 
         if train_n + (i + 1) * test_n >= X.shape[0]:
             break
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     x_series = data['value'].values.reshape(-1, 1)
     X, Y = gen_total_datasets(x_series, HIST_LEN, PRED_LEN)
     
-    test_n = 20
+    test_n = 1
 
     # ---- 使用Walk-forward方法训练 -----------------------------------------------------------------
     # 这一步评估每次walk-forward时应该使用多少训练样本获得的模型指标最优.
@@ -100,34 +100,34 @@ if __name__ == '__main__':
 
     # ---- Walk-forward超参数确定 -------------------------------------------------------------------
 
-    train_n = 10
+    # train_n = 15
 
-    eval_results = []
-    repeat_n = 5
-    for n_estimators in range(10, 400, 50):
-        MAE_lst = []
-        for i in range(repeat_n):
-            MAE_mean = walk_forward_validation(X, Y, train_n, test_n, n_estimators=n_estimators)
-            MAE_lst.append(MAE_mean)
-        MAE_value = np.mean(MAE_lst)
-        eval_results.append([n_estimators, MAE_value])
-        print('n_estimators: {}, mean MAE: {}'.format(n_estimators, MAE_value))
-    proj_plt.plot([p[0] for p in eval_results], [p[1] for p in eval_results])
+    # eval_results = []
+    # repeat_n = 1
+    # for n_estimators in range(10, 400, 50):
+    #     MAE_lst = []
+    #     for i in range(repeat_n):
+    #         MAE_mean = walk_forward_validation(X, Y, train_n, test_n, n_estimators=n_estimators)
+    #         MAE_lst.append(MAE_mean)
+    #     MAE_value = np.mean(MAE_lst)
+    #     eval_results.append([n_estimators, MAE_value])
+    #     print('n_estimators: {}, mean MAE: {}'.format(n_estimators, MAE_value))
+    # proj_plt.plot([p[0] for p in eval_results], [p[1] for p in eval_results])
 
     # ---- 模型训练和验证 ---------------------------------------------------------------------------
 
-    # train_n = 10
-    # rgsr = RandomForestRegressor(n_estimators=200)
+    train_n = 15
+    rgsr = RandomForestRegressor(n_estimators=200)
 
-    # # X_train = X[-(train_n + test_n) : -test_n, :]
-    # # Y_train = Y[-(train_n + test_n) : -test_n, :]
+    X_train = X[-(train_n + test_n) : -test_n, :]
+    Y_train = Y[-(train_n + test_n) : -test_n, :]
     # X_train = X[:-1, :]
     # Y_train = Y[:-1, :]
-    # X_test = X[-1:, :]
-    # rgsr.fit(X_train, Y_train)
-    # Y_test_pred = rgsr.predict(X_test)
-    # # proj_plt.plot(
-    # #     np.hstack((x_series.flatten(), Y_test_pred.flatten()))
-    # #     )
-    # proj_plt.plot(Y[-1, :].flatten())
-    # proj_plt.plot(Y_test_pred.flatten())
+    X_test = X[-1:, :]
+    rgsr.fit(X_train, Y_train)
+    Y_test_pred = rgsr.predict(X_test)
+    # proj_plt.plot(
+    #     np.hstack((x_series.flatten(), Y_test_pred.flatten()))
+    #     )
+    proj_plt.plot(Y[-1, :].flatten())
+    proj_plt.plot(Y_test_pred.flatten())
