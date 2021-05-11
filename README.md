@@ -29,7 +29,7 @@
 * 对于有的不依赖迭代学习的模型, 如随机森林, 在每轮训练过程中模型都必须完成充分训练
   * 代码: src/air_passengers/rf_walk_forward.py 
 * 对于依赖迭代的模型, 如GBDT等, 每轮训练过程中模型都可以不用进行充分训练, 类似fine-tune. 
-  * 代码: src/air_passengers/gbdt_walk_forward.py 
+  * 代码: src/air_passengers/mlp_walk_forward.py 
 
 ### 3. 深度学习中的改进和应用
 
