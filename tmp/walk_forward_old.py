@@ -117,7 +117,7 @@ if __name__ == '__main__':
     # ---- 模型训练和验证 ---------------------------------------------------------------------------
 
     train_n = 15
-    rgsr = RandomForestRegressor(n_estimators=200)
+    rgsr = RandomForestRegressor(n_estimators=500, max_depth=2)
 
     X_train = X[-(train_n + test_n) : -test_n, :]
     Y_train = Y[-(train_n + test_n) : -test_n, :]
