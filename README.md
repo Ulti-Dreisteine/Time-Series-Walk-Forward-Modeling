@@ -51,5 +51,5 @@ $$
 需按照上式对模型训练目标函数进行改写.
 
 
-[^1]: 知乎回答: https://www.zhihu.com/question/39639128
+[^1]: 知乎回答: https://www.zhihu.com/question/39639128  
 [^2]: TSCV算法包: http://www.zhengwenjie.net/tscv/
