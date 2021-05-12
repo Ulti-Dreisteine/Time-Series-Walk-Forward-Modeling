@@ -2,20 +2,20 @@
 """
 Created on 2021/05/11 11:43:32
 
-@File -> gbdt_walk_forward.py
+@File -> mlp_walk_forward.py
 
 @Author: luolei
 
 @Email: dreisteine262@163.com
 
-@Describe: GBDT Walk-forward模型验证
+@Describe: MLP Walk-forward模型验证
 """
 
 import warnings
 from matplotlib.pyplot import xcorr
 from scipy.sparse import data
 
-# warnings.filterwarnings('ignore')
+warnings.filterwarnings('ignore')
 
 from sklearn.metrics import mean_squared_error as error
 from sklearn.neural_network import MLPRegressor
@@ -31,14 +31,17 @@ sys.path.append(BASE_DIR)
 from src.settings import *
 
 
-def build_datasets(X: np.ndarray, Y: np.ndarray, train_n: int, test_n: int) -> dict:
+def build_datasets(X: np.ndarray, Y: np.ndarray, train_n: int, test_n: int, rolling_window: bool = True) -> dict:
     datasets = {}
     i = 0
     while True:
-        X_train = X[i * test_n: train_n + i * test_n, :]
-        Y_train = Y[i * test_n: train_n + i * test_n, :]
-        # X_train = X[: train_n + i * test_n, :]
-        # Y_train = Y[: train_n + i * test_n, :]
+        if rolling_window:
+            X_train = X[i * test_n: train_n + i * test_n, :]
+            Y_train = Y[i * test_n: train_n + i * test_n, :]
+        else:
+            X_train = X[: train_n + i * test_n, :]
+            Y_train = Y[: train_n + i * test_n, :]
+
         X_test = X[train_n + i * test_n: train_n + (i + 1) * test_n, :]
         Y_test = Y[train_n + i * test_n: train_n + (i + 1) * test_n, :]
 
@@ -77,9 +80,9 @@ if __name__ == '__main__':
     scaler_y = MinMaxScaler(feature_range=(0, 1))
     Y = scaler_y.fit_transform(Y)
 
-    # # ---- 模型训练 ---------------------------------------------------------------------------------
+    # # ---- 模型训练 -------------------------------------------------------------------------------
 
-    train_n, test_n = 20, 10
+    train_n, test_n = 20, 5
 
     # 划分Walk-forward数据集.
     datasets = build_datasets(X, Y, train_n, test_n)
@@ -92,17 +95,17 @@ if __name__ == '__main__':
     # 一定要设置为warm_start = True, max_iter = 1, 否则每轮都会充分训练
     rgsr = MLPRegressor(
         solver='adam',
-        hidden_layer_sizes=(10,),
+        hidden_layer_sizes=(10, 5),
         activation='tanh',
         learning_rate='adaptive',
         learning_rate_init=0.01,
         max_iter=1,
-        alpha=0.001,
+        alpha=0.1,
         warm_start=True
     )
 
     loss_lst = []
-    for turn in range(30):
+    for turn in range(100):
         metric_turn_lst = []
         for k in datasets.keys():
             X_train = datasets[k]['X_train']

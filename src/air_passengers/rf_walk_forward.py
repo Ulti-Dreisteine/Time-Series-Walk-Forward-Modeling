@@ -2,7 +2,7 @@
 """
 Created on 2021/05/11 10:16:45
 
-@File -> walk_forward.py
+@File -> rf_walk_forward.py
 
 @Author: luolei
 
