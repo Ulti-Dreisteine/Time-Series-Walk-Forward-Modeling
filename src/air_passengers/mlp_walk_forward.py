@@ -12,8 +12,6 @@ Created on 2021/05/11 11:43:32
 """
 
 import warnings
-from matplotlib.pyplot import xcorr
-from scipy.sparse import data
 
 warnings.filterwarnings('ignore')
 
